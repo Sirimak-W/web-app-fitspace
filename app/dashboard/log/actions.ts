@@ -3,6 +3,20 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 
+export async function deleteRun(id: string) {
+  const supabase = await createClient()
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (!user) redirect('/login')
+
+  await supabase.from('runs').delete().eq('id', id).eq('user_id', user.id)
+
+  redirect('/dashboard')
+}
+
 export async function logRun(formData: FormData) {
   const supabase = await createClient()
   const {
